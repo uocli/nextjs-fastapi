@@ -9,12 +9,6 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Check versions to confirm installation
-RUN node --version && npm --version && python3 --version && pip3 --version
-
-
-# Check if Python and pip were installed correctly
-RUN python3 --version && pip3 --version
 WORKDIR /app
 
 COPY requirements.txt .
@@ -25,11 +19,6 @@ COPY . .
 
 EXPOSE 8080
 
-#CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8080"]
-
-
-
-#FROM node:18-alpine
 
 WORKDIR /app
 
