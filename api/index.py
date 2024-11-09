@@ -4,8 +4,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from mangum import Mangum  # Import Mangum
-
 app = FastAPI(docs_url="/api/docs", openapi_url="/api/openapi.json")
 
 
@@ -87,6 +85,3 @@ def delete_todo_item(todo_id: int):
             del todos[i]
             return {"message": "Todo item deleted"}
     return {"error": "Todo item not found"}
-
-
-handler = Mangum(app)  # Wrap the FastAPI app with Mangum
