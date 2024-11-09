@@ -1,51 +1,31 @@
-name: Deploy FastAPI and Next.js
+name: Deploy Next.js and FastAPI
 
 on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  build:
+  deploy-frontend:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Check out the code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
+      - name: Deploy to Vercel
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npm install -g vercel
+          vercel --prod --token $VERCEL_TOKEN --confirm
 
-    - name: Install FastAPI dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt  # Ensure you have a requirements.txt file
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '22'
-
-    - name: Install Next.js dependencies
-      run: |
-        npm install pnpm -g
-        pnpm install  # Ensure you have a pnpm-lock.yaml file
-
-    - name: Build Next.js app
-      run: |
-        npm run build
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./out  # Change if your output dir is different
-
-    - name: Run FastAPI app (optional)
-      run: |
-        uvicorn main:app --host 0.0.0.0 --port 8000  # Adjust according to your entry point
+      - name: Deploy FastAPI
+        run: |
+          # Commands to deploy FastAPI on your chosen platform, e.g., Railway CLI
+          railway up  # Adjust as per your platform’s deployment command
