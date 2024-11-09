@@ -1,4 +1,4 @@
-name: Deploy Next.js and FastAPI
+name: Deploy Next.js and FastAPI App
 
 on:
   push:
@@ -6,11 +6,24 @@ on:
       - main
 
 jobs:
-  deploy-frontend:
+  deploy-nextjs:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the code
-        uses: actions/checkout@v4
+      - name: Checkout the code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./  # Path to your Next.js app
+        run: npm install
+
+      - name: Build Next.js
+        working-directory: ./
+        run: npm run build
 
       - name: Deploy to Vercel
         env:
@@ -19,13 +32,16 @@ jobs:
           npm install -g vercel
           vercel --prod --token $VERCEL_TOKEN --confirm
 
-  deploy-backend:
+  deploy-fastapi:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the code
-        uses: actions/checkout@v4
+      - name: Checkout the code
+        uses: actions/checkout@v3
 
-      - name: Deploy FastAPI
+      # Option 1: Deploy FastAPI as Serverless Functions on Vercel (for lightweight endpoints)
+      - name: Deploy FastAPI as Serverless Functions
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          # Commands to deploy FastAPI on your chosen platform, e.g., Railway CLI
-          railway up  # Adjust as per your platform’s deployment command
+          npm install -g vercel
+          vercel deploy --token $VERCEL_TOKEN --confirm
