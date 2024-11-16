@@ -1,35 +1,28 @@
 name: Deploy to ACI
 
 on:
-  workflow_dispatch:  # Allows manual trigger
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Login to Azure using the Azure CLI Action
+      # Step 1: Login to Azure
       - name: 'Login to Azure'
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Step 2: Get ACR login credentials
-      - name: 'Get ACR credentials'
-        run: |
-          az acr login --name ${{ secrets.ACR_NAME }}
-
-      # Step 3: Deploy to Azure Container Instances using Azure CLI
+      # Step 2: Deploy to Azure Container Instances
       - name: 'Deploy to Azure Container Instances'
-        run: |
-          az container create \
-            --resource-group myResourceGroup \
-            --name mycontainerinstance \
-            --image ${{ secrets.REGISTRY_LOGIN_SERVER }}/app:latest \
-            --dns-name-label myappdeployment \
-            --ports 80 \
-            --cpu 1 \
-            --memory 1.5 \
-            --location eastus \
-            --registry-username ${{ secrets.ACR_USERNAME }} \
-            --registry-password ${{ secrets.ACR_PASSWORD }}
+        uses: 'azure/aci-deploy@v1'
+        with:
+          resource-group: myResourceGroup
+          dns-name-label: nextjsfastapi # Must be globally unique
+          image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/app:latest
+          location: 'eastus'
+          cpu: 1
+          memory: 1.5
+          ports: 80
+          name: nextjsfastapi # Name for the Azure Container Instance
