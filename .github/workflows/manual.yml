@@ -29,10 +29,10 @@ jobs:
           az container create \
             --resource-group MyResourceGroup \
             --name nextjsfastapi \
-            --image mycontainerregistrygng5300a.azurecr.io/app:lateset \
+            --image mycontainerregistrygng5300a.azurecr.io/app:latest \ 
             --cpu 1 \
             --memory 1.5 \
             --registry-username ${{ secrets.REGISTRY_USERNAME }} \
             --registry-password ${{ secrets.REGISTRY_PASSWORD }} \
-            --dns-name-label <dns-label> \
+            --dns-name-label nextjsfastapi \
             --ports 80
