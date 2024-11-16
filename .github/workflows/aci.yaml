@@ -1,26 +1,28 @@
 name: Deploy to ACI
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Allows manual triggering of the workflow
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Login to Azure
       - name: 'Login to Azure'
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # Step 2: Deploy to Azure Container Instances
       - name: 'Deploy to Azure Container Instances'
         uses: 'azure/aci-deploy@v1'
         with:
           resource-group: myResourceGroup
-          dns-name-label: myappdeployment
+          dns-name-label: nextjs-fastapi-app # Must be globally unique
           image: ${{ secrets.REGISTRY_LOGIN_SERVER }}/app:latest
           location: 'eastus'
           cpu: 1
           memory: 1.5
           ports: 80
-          name: ''
+          name: nextjs-fastapi-container-instance # Name for the Azure Container Instance
