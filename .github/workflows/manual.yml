@@ -23,7 +23,16 @@ jobs:
         run: |
           az acr login --name mycontainerregistrygng5300a
 
-      # Step 4: Build and push the Docker image
+      # Step 4: Deploy container to ACI
       - name: Deploy container to ACI
         run: |
-          az container create --resource-group MyResourceGroup --name nextjsfastapi --image mycontainerregistrygng5300a.azurecr.io/app:latest --cpu 1 --memory 1.5 --registry-username ${{ secrets.REGISTRY_USERNAME }} --registry-password ${{ secrets.REGISTRY_PASSWORD }} --dns-name-label nextjsfastapi --ports 80
+          az container create \
+            --resource-group MyResourceGroup \
+            --name nextjsfastapi \
+            --image mycontainerregistrygng5300a.azurecr.io/app:latest \
+            --cpu 1 \
+            --memory 1.5 \
+            --registry-username ${{ secrets.REGISTRY_USERNAME }} \
+            --registry-password ${{ secrets.REGISTRY_PASSWORD }} \
+            --dns-name-label nextjsfastapi \
+            --ports 80
