@@ -1,4 +1,4 @@
-name: Build and Push to ACR
+name: Build and Push Docker Image to ACR
 
 on:
   push:
@@ -9,14 +9,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: 'Login to Azure'
+      # Step 2: Login to Azure
+      - name: Login to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 'Build and push image'
+      # Step 3: Login to ACR
+      - name: Login to ACR
         run: |
-          docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/app:latest
-          docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/app:latest
+          az acr login --name mycontainerregistrygng5300a
+
+      # Step 4: Build and push the Docker image
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_NAME=mycontainerregistrygng5300a.azurecr.io/app:latest
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
