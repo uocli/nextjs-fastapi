@@ -14,7 +14,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Step 2: Deploy to Azure Container Instances using Azure CLI
+      # Step 2: Get ACR login credentials
+      - name: 'Get ACR credentials'
+        run: |
+          az acr login --name ${{ secrets.ACR_NAME }}
+
+      # Step 3: Deploy to Azure Container Instances using Azure CLI
       - name: 'Deploy to Azure Container Instances'
         run: |
           az container create \
@@ -25,4 +30,6 @@ jobs:
             --ports 80 \
             --cpu 1 \
             --memory 1.5 \
-            --location eastus
+            --location eastus \
+            --registry-username ${{ secrets.ACR_USERNAME }} \
+            --registry-password ${{ secrets.ACR_PASSWORD }}
